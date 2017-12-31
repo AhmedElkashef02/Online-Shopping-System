@@ -3,29 +3,27 @@
 
 using namespace std;
 
-class Intnode {
+class ItemNode {
 public:
 	string brand;
 	string model;
 	double price;
-  int data;
-  Intnode *next; // pointer to next node
+  ItemNode *next; // pointer to next node
 
-  Intnode(string br, string md, double pr, int x, Intnode *ptr = 0) {
+  ItemNode(string br, string md, double pr, ItemNode *ptr = 0) {
 		brand = br;
 		model = md;
 		price = pr;
-    data = x;
     next = ptr;
   }
 };
 
-class IntLlist {
+class ItemList {
 private:
-  Intnode *head, *tail;
+  ItemNode *head, *tail;
 
 public:
-  IntLlist() {
+  ItemList() {
 		head = tail = 0;
 	}
 
@@ -33,23 +31,23 @@ public:
 		return head == 0;
 	}
 
-  void addToHead(int d) {
-    head = new Intnode(d, head);
+  void addToHead(string br, string md, double pr) {
+    head = new ItemNode(br, md, pr, head);
     if (tail == 0)
       tail = head;
   }
 
-  void addToTail(int d) {
+  void addToTail(string br, string md, double pr) {
     if (tail == 0)
-      head = tail = new Intnode(d);
+      head = tail = new ItemNode(br, md, pr);
     else {
-      tail->next = new Intnode(d);
+      tail->next = new ItemNode(br, md, pr);
       tail = tail->next;
     }
   }
 
   void deleteFromHead() {
-    Intnode *tmp = head;
+    ItemNode *tmp = head;
     if (head == tail)
       head = tail = 0;
     else
@@ -62,7 +60,7 @@ public:
       delete head;
       head = tail = 0;
     } else {
-      Intnode *tmp;
+      ItemNode *tmp;
       for (tmp = head; tmp->next != tail; tmp = tmp->next)
         ;
 
@@ -79,12 +77,12 @@ public:
         head = tail = 0;
       } else if (br == head->brand && md == head->model && pr == head->price) {
         // deleteFromHead();
-        Intnode *tmp = head;
+        ItemNode *tmp = head;
         head = head->next;
         delete tmp;
       } else {
-        Intnode *p, *tmp;
-        for (p = head, tmp = head->next; (tmp != 0 && tmp->data != d);
+        ItemNode *p, *tmp;
+        for (p = head, tmp = head->next; (tmp != 0 && tmp->brand != br && tmp->model != md && tmp->price != pr);
              p = p->next, tmp = tmp->next)
           ;
 
@@ -98,22 +96,22 @@ public:
     }
   }
 
-  bool isInList(int d) const { // can't change any member state
-    Intnode *tmp;
-    for (tmp = head; tmp != 0 && tmp->data != d; tmp = tmp->next)
+  bool isInList(string br, string md, double pr) const { // can't change any member state
+    ItemNode *tmp;
+    for (tmp = head; tmp != 0 && tmp->brand != br && tmp->model != md && tmp->price != pr; tmp = tmp->next)
       ;
     return tmp != 0;
   }
 
   void printAll() const {
-    Intnode *p;
+    ItemNode *p;
     for (p = head; p != 0; p = p->next) {
-      cout << p->data << endl;
+      cout << p->brand << "," << p->model << "," << p->price << endl;
     }
   }
 
-  ~IntLlist() {
-    for (Intnode *p; !isEmpty();) {
+  ~ItemList() {
+    for (ItemNode *p; !isEmpty();) {
       p = head->next;
       delete head;
       head = p;
@@ -122,9 +120,10 @@ public:
 };
 
 int main() {
-  IntLlist *myList = new IntLlist();
+  ItemList *headPhones = new ItemList();
 
-  myList->addToTail(30);
+  headPhones->addToTail("ilov","3x01",120.99);
+	headPhones->printAll();
 
   return 0;
 }
