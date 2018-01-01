@@ -9,15 +9,15 @@ using namespace std;
 
 class ItemNode {
 public:
-	string brand;
-	string model;
-	double price;
+  string brand;
+  string model;
+  double price;
   ItemNode *next; // pointer to next node
 
   ItemNode(string br, string md, double pr, ItemNode *ptr = 0) {
-		brand = br;
-		model = md;
-		price = pr;
+    brand = br;
+    model = md;
+    price = pr;
     next = ptr;
   }
 };
@@ -28,12 +28,12 @@ private:
 
 public:
   ItemList() {
-		head = tail = 0;
-	}
+    head = tail = 0;
+  }
 
   int isEmpty() {
-		return head == 0;
-	}
+    return head == 0;
+  }
 
   void addToHead(string br, string md, double pr) {
     head = new ItemNode(br, md, pr, head);
@@ -43,18 +43,18 @@ public:
 
   void addToTail(string br, string md, double pr) {
     if (tail == 0) {
-			head = tail = new ItemNode(br, md, pr);
-			ofstream myfile;
-		  myfile.open("products.txt");
-		  myfile << br << "," << md << "," << pr << "\n";
-		  myfile.close();
-		}	else {
+      head = tail = new ItemNode(br, md, pr);
+      ofstream myfile;
+      myfile.open("products.txt");
+      myfile << br << "," << md << "," << pr << "\n";
+      myfile.close();
+    } else {
       tail->next = new ItemNode(br, md, pr);
       tail = tail->next;
-			ofstream myfile;
-		  myfile.open("products.txt",ios::app);
-		  myfile << br << "," << md << "," << pr << "\n";
-		  myfile.close();
+      ofstream myfile;
+      myfile.open("products.txt",ios::app);
+      myfile << br << "," << md << "," << pr << "\n";
+      myfile.close();
     }
   }
 
@@ -132,65 +132,63 @@ public:
 };
 
 string *splitString(string str) {
-	static string array[3];
-	std::vector<std::string> strings;
-	 std::istringstream f(str);
-	 std::string s;
-	 int iterator = 0;
-	 while (std::getline(f, s, ',')) {
-				 array[iterator] = s;
-				 iterator++;
-				 strings.push_back(s);
-	 }
-	 return array;
+  static string array[3];
+  std::vector<std::string> strings;
+   std::istringstream f(str);
+   std::string s;
+   int iterator = 0;
+   while (std::getline(f, s, ',')) {
+         array[iterator] = s;
+         iterator++;
+         strings.push_back(s);
+   }
+   return array;
 }
 
-double convertToDouble(char str[]) {
-	double price = atof(str);
-	return price;
+double convertToDouble(string str) {
+  double price = atof(str.c_str());
+  return price;
 }
 
 void reCreateDb() {
-	// ItemList *dB = new ItemList();
+  ItemList *dB = new ItemList();
 
-	//Reading File
-	ifstream file("products.txt");
-	string lines[5];
-	int lineIterator = 0;
-	string line;
-	while(getline(file, line)){
-		lines[lineIterator] = line;
-		lineIterator++;
-	}
+  //Reading File
+  ifstream file("products.txt");
+  string lines[5];
+  int lineIterator = 0;
+  string line;
+  while(getline(file, line)){
+    lines[lineIterator] = line;
+    lineIterator++;
+  }
 
-	//call splitString
-	for (int i = 0; i<5;i++){
-		string var = lines[i];
-		string *splitted = splitString(var);
-		for (int j = 0;j<3;j++){
-			cout<<splitted[j]<<" ";
-		}
-		cout<<endl;
-	}
-
-	// variable = splitString(line);
-	//call constructor(variable[0],variable[1],convertToDouble(variable[2]))
+  //call splitString
+  for (int i = 0; i<5;i++){
+    string var = lines[i];
+    string *splitted = splitString(var);
+    dB->addToTail(splitted[0],splitted[1],convertToDouble(splitted[2]));
+  }
+  dB->printAll();
+  // variable = splitString(line);
+  //call constructor(variable[0],variable[1],convertToDouble(variable[2]))
 
 }
 
 int main() {
 
-	splitString("ilove,3x01,120");
+  // splitString("ilove,3x01,120");
 
   ItemList *headPhones = new ItemList();
 
-  headPhones->addToTail("ilov","3x01",120.99);
-	headPhones->addToTail("ihate","3x01",120.99);
-	headPhones->addToTail("ih","3x01",120.99);
-	headPhones->addToTail("ihte","3x01",120.99);
-	headPhones->addToTail("ok","3x01",120.99);
-	reCreateDb();
-	// headPhones->printAll();
+  reCreateDb();
+ //  headPhones->addToTail("ilov","3x01",120.99);
+  // headPhones->addToTail("ihate","3x01",120.99);
+  // headPhones->addToTail("ih","3x01",120.99);
+  // headPhones->addToTail("ihte","3x01",120.99);
+  // headPhones->addToTail("ok","3x01",120.99);
+  
+  // headPhones->printAll();
 
   return 0;
 }
