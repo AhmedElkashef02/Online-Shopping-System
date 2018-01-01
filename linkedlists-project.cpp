@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
+#include <sstream>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -43,14 +46,14 @@ public:
 			head = tail = new ItemNode(br, md, pr);
 			ofstream myfile;
 		  myfile.open("products.txt");
-		  myfile << br << ", " << md << ", " << pr << "\n";
+		  myfile << br << "," << md << "," << pr << "\n";
 		  myfile.close();
 		}	else {
       tail->next = new ItemNode(br, md, pr);
       tail = tail->next;
 			ofstream myfile;
 		  myfile.open("products.txt",ios::app);
-		  myfile << br << ", " << md << ", " << pr << "\n";
+		  myfile << br << "," << md << "," << pr << "\n";
 		  myfile.close();
     }
   }
@@ -128,7 +131,57 @@ public:
   }
 };
 
+string *splitString(string str) {
+	static string array[3];
+	std::vector<std::string> strings;
+	 std::istringstream f(str);
+	 std::string s;
+	 int iterator = 0;
+	 while (std::getline(f, s, ',')) {
+				 array[iterator] = s;
+				 iterator++;
+				 strings.push_back(s);
+	 }
+	 return array;
+}
+
+double convertToDouble(char str[]) {
+	double price = atof(str);
+	return price;
+}
+
+void reCreateDb() {
+	// ItemList *dB = new ItemList();
+
+	//Reading File
+	ifstream file("products.txt");
+	string lines[5];
+	int lineIterator = 0;
+	string line;
+	while(getline(file, line)){
+		lines[lineIterator] = line;
+		lineIterator++;
+	}
+
+	//call splitString
+	for (int i = 0; i<5;i++){
+		string var = lines[i];
+		string *splitted = splitString(var);
+		for (int j = 0;j<3;j++){
+			cout<<splitted[j]<<" ";
+		}
+		cout<<endl;
+	}
+
+	// variable = splitString(line);
+	//call constructor(variable[0],variable[1],convertToDouble(variable[2]))
+
+}
+
 int main() {
+
+	splitString("ilove,3x01,120");
+
   ItemList *headPhones = new ItemList();
 
   headPhones->addToTail("ilov","3x01",120.99);
@@ -136,7 +189,8 @@ int main() {
 	headPhones->addToTail("ih","3x01",120.99);
 	headPhones->addToTail("ihte","3x01",120.99);
 	headPhones->addToTail("ok","3x01",120.99);
-	headPhones->printAll();
+	reCreateDb();
+	// headPhones->printAll();
 
   return 0;
 }
