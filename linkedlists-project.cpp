@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -38,11 +39,19 @@ public:
   }
 
   void addToTail(string br, string md, double pr) {
-    if (tail == 0)
-      head = tail = new ItemNode(br, md, pr);
-    else {
+    if (tail == 0) {
+			head = tail = new ItemNode(br, md, pr);
+			ofstream myfile;
+		  myfile.open("products.txt");
+		  myfile << br << ", " << md << ", " << pr << "\n";
+		  myfile.close();
+		}	else {
       tail->next = new ItemNode(br, md, pr);
       tail = tail->next;
+			ofstream myfile;
+		  myfile.open("products.txt",ios::app);
+		  myfile << br << ", " << md << ", " << pr << "\n";
+		  myfile.close();
     }
   }
 
@@ -123,6 +132,10 @@ int main() {
   ItemList *headPhones = new ItemList();
 
   headPhones->addToTail("ilov","3x01",120.99);
+	headPhones->addToTail("ihate","3x01",120.99);
+	headPhones->addToTail("ih","3x01",120.99);
+	headPhones->addToTail("ihte","3x01",120.99);
+	headPhones->addToTail("ok","3x01",120.99);
 	headPhones->printAll();
 
   return 0;
