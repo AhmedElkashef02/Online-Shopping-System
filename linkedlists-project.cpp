@@ -154,40 +154,39 @@ ItemList *reCreateDb() {
   ItemList *dB = new ItemList();
 
   //Reading File
-  ifstream file("products.txt");
-  string lines[6];
+  ifstream file1("products.txt");
+	string temp;
+	int lineCount=0;
+	while(getline(file1,temp)){
+		++lineCount;
+		}
+
+	ifstream file2("products.txt");
+	string lines[lineCount];
   int lineIterator = 0;
-  string line;
-  while(getline(file, line)){
+	string line;
+  while(getline(file2, line)){
     lines[lineIterator] = line;
     lineIterator++;
   }
 
   //recreate database from the readed file lines
-  for (int i = 0; i<6;i++){
+  for (int i = 0; i<lineCount;i++){
     string var = lines[i];
     string *splitted = splitString(var);
     dB->addToTail(splitted[0],splitted[1],convertToDouble(splitted[2]));
   }
-  // dB->printAll();
 	return dB;
 
 }
 
 int main() {
 
-  // splitString("ilove,3x01,120");
-
   ItemList *headPhones = new ItemList();
 
   ItemList *x = reCreateDb();
-	x->addToTail("ilove","3x01",1235.56);
+	x->addToTail("yalahwi","3x01",1235.56);
 	x->printAll();
-
-	//headPhones->addToTail("ilov","3x01",120.99);
-
-
-  // headPhones->printAll();
 
   return 0;
 }
