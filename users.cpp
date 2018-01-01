@@ -4,20 +4,19 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
+#include "md5.h"
 
 using namespace std;
 
 class ItemNode {
 public:
-  string brand;
-  string model;
-  double price;
+  string username;
+  string password;
   ItemNode *next; // pointer to next node
 
-  ItemNode(string br, string md, double pr, ItemNode *ptr = 0) {
-    brand = br;
-    model = md;
-    price = pr;
+  ItemNode(string un, string pwd, ItemNode *ptr = 0) {
+    username = un;
+    password = pwd;
     next = ptr;
   }
 };
@@ -35,25 +34,26 @@ public:
     return head == 0;
   }
 
-  void addToHead(string br, string md, double pr) {
-    head = new ItemNode(br, md, pr, head);
+  void addToHead(string un, string pwd) {
+    head = new ItemNode(un, pwd, head);
     if (tail == 0)
       tail = head;
   }
 
-  void addToTail(string br, string md, double pr) {
+  void addToTail(string un, string pwd) {
+    string secure_pwd = md5(pwd);
     if (tail == 0) {
-      head = tail = new ItemNode(br, md, pr);
+      head = tail = new ItemNode(un, secure_pwd);
       ofstream myfile;
-      myfile.open("products.txt");
-      myfile << br << "," << md << "," << pr << "\n";
+      myfile.open("users.txt");
+      myfile << un << "," << secure_pwd << "\n";
       myfile.close();
     } else {
-      tail->next = new ItemNode(br, md, pr);
+      tail->next = new ItemNode(un, secure_pwd);
       tail = tail->next;
       ofstream myfile;
-      myfile.open("products.txt",ios::app);
-      myfile << br << "," << md << "," << pr << "\n";
+      myfile.open("users.txt",ios::app);
+      myfile << un << "," << secure_pwd << "\n";
       myfile.close();
     }
   }
@@ -82,19 +82,19 @@ public:
     }
   }
 
-  void deleteNode(string br, string md, double pr) {
+  void deleteNode(string un, string pwd) {
     if (head != 0) {
-      if (head == tail && ( br == head->brand && md == head->model && pr == head->price ) ) {
+      if (head == tail && ( un == head->username && pwd == head->password ) ) {
         delete head;
         head = tail = 0;
-      } else if (br == head->brand && md == head->model && pr == head->price) {
+      } else if (un == head->username && pwd == head->password) {
         // deleteFromHead();
         ItemNode *tmp = head;
         head = head->next;
         delete tmp;
       } else {
         ItemNode *p, *tmp;
-        for (p = head, tmp = head->next; (tmp != 0 && tmp->brand != br && tmp->model != md && tmp->price != pr);
+        for (p = head, tmp = head->next; (tmp != 0 && tmp->username != un && tmp->password != pwd);
              p = p->next, tmp = tmp->next)
           ;
 
@@ -108,9 +108,9 @@ public:
     }
   }
 
-  bool isInList(string br, string md, double pr) const { // can't change any member state
+  bool isInList(string un, string pwd) const { // can't change any member state
     ItemNode *tmp;
-    for (tmp = head; tmp != 0 && tmp->brand != br && tmp->model != md && tmp->price != pr; tmp = tmp->next)
+    for (tmp = head; tmp != 0 && tmp->username != un && tmp->password != pwd; tmp = tmp->next)
       ;
     return tmp != 0;
   }
@@ -118,7 +118,7 @@ public:
   void printAll() const {
     ItemNode *p;
     for (p = head; p != 0; p = p->next) {
-      cout << p->brand << "," << p->model << "," << p->price << endl;
+      cout << p->username << "," << p->password << endl;
     }
   }
 
@@ -154,40 +154,39 @@ ItemList *reCreateDb() {
   ItemList *dB = new ItemList();
 
   //Reading File
-  ifstream file("products.txt");
-  string lines[6];
+  ifstream file1("users.txt");
+	string temp;
+	int lineCount=0;
+	while(getline(file1,temp)){
+		++lineCount;
+		}
+
+	ifstream file2("users.txt");
+	string lines[lineCount];
   int lineIterator = 0;
-  string line;
-  while(getline(file, line)){
+	string line;
+  while(getline(file2, line)){
     lines[lineIterator] = line;
     lineIterator++;
   }
 
   //recreate database from the readed file lines
-  for (int i = 0; i<6;i++){
+  for (int i = 0; i<lineCount;i++){
     string var = lines[i];
     string *splitted = splitString(var);
-    dB->addToTail(splitted[0],splitted[1],convertToDouble(splitted[2]));
+    dB->addToTail(splitted[0],splitted[1]);
   }
-  // dB->printAll();
 	return dB;
 
 }
 
 int main() {
 
-  // splitString("ilove,3x01,120");
-
   ItemList *headPhones = new ItemList();
 
   ItemList *x = reCreateDb();
-	x->addToTail("ilove","3x01",1235.56);
+	x->addToTail("OmarGaber","omamomam");
 	x->printAll();
-
-	//headPhones->addToTail("ilov","3x01",120.99);
-
-
-  // headPhones->printAll();
 
   return 0;
 }
