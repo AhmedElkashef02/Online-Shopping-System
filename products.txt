@@ -1,10 +1,4 @@
-ilov,3x01,120.99
-ihate,3x01,120.99
-ih,3x01,120.99
-ihte,3x01,120.99
-ok,3x01,120.99
-ilove,3x01,120
-ilove,3x01,1235.56
-yalahwi,3x01,1235.56
-yalahwi,3x01,1235.56
-yalahwi,3x01,1235.56
+yala,3x01,19.3
+yalahw,3x01,9.5
+ya,3x01,35.54
+yalah,3x01,75.8

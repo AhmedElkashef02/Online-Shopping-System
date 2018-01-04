@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include <string>
 #include <fstream>
 #include <vector>
@@ -6,7 +7,7 @@
 #include <stdlib.h>
 
 using namespace std;
-
+class ItemList;
 class ItemNode {
 public:
   string brand;
@@ -21,8 +22,95 @@ public:
     next = ptr;
   }
 };
+class File{
+public:
+  string NumperToString (int Number){
+    stringstream ss;
+    ss << Number;
+    return ss.str();
+  }
+  void add_to_file(string br, string md, double pr){
+      ofstream myfile("products.txt",ios::app);
+      myfile << br << "," << md << "," << pr << "\n";
+      myfile.close();
 
-class ItemList {
+  }
+  void delete_from_file(string brn, string mod){
+    string b(brn), m(mod),line;
+    ifstream in("products.txt");
+    if( !in.is_open())
+    {
+        cout <<"Unable to open products.txt, please make sure file exists!"<<endl;
+        return;
+    }
+    ofstream out("outfile.txt"); //temp file that will have our records with out the deleted line
+        //Now our file (records.txt) is open lets loop through an find our customer name which wa
+        //inputted just a ways up.
+    while( getline(in,line) )
+    {
+         if ( ( line.find (b+','+m, 0)))
+        //if last name is found delete the whole line
+        out << line << "\n";
+    }
+    //close our files, because were done!
+    in.close();
+    out.close();
+    // delete the original file
+    remove("products.txt");
+    // rename old to new
+    rename("outfile.txt","products.txt");
+  }
+
+  string *splitString(string str) {
+    static string array[3];
+    std::vector<std::string> strings;
+     std::istringstream f(str);
+     std::string s;
+     int iterator = 0;
+     while (std::getline(f, s, ',')) {
+           array[iterator] = s;
+           iterator++;
+           strings.push_back(s);
+     }
+     return array;
+  }
+
+  double convertToDouble(string str) {
+    double price = atof(str.c_str());
+    return price;
+  }
+
+  /*ItemList *reCreateDb() {
+    ItemList *dB = new ItemList();
+
+    //Reading File
+    ifstream file1("products.txt");
+    string temp;
+    int lineCount=0;
+    while(getline(file1,temp)){
+      ++lineCount;
+      }
+
+    ifstream file2("products.txt");
+    string lines[lineCount];
+    int lineIterator = 0;
+    string line;
+    while(getline(file2, line)){
+      lines[lineIterator] = line;
+      lineIterator++;
+    }
+
+    //recreate database from the readed file lines
+    for (int i = 0; i<lineCount;i++){
+      string var = lines[i];
+      string *splitted = splitString(var);
+      dB->addToTail(splitted[0],splitted[1],convertToDouble(splitted[2]));
+    }
+  return dB;
+
+  }*/
+};  
+class ItemList{
 private:
   ItemNode *head, *tail;
 
@@ -42,19 +130,15 @@ public:
   }
 
   void addToTail(string br, string md, double pr) {
+    File add;
     if (tail == 0) {
       head = tail = new ItemNode(br, md, pr);
-      ofstream myfile;
-      myfile.open("products.txt");
-      myfile << br << "," << md << "," << pr << "\n";
-      myfile.close();
+      add.add_to_file(br, md, pr);
+
     } else {
       tail->next = new ItemNode(br, md, pr);
       tail = tail->next;
-      ofstream myfile;
-      myfile.open("products.txt",ios::app);
-      myfile << br << "," << md << "," << pr << "\n";
-      myfile.close();
+      add.add_to_file(br, md, pr);
     }
   }
 
@@ -82,19 +166,29 @@ public:
     }
   }
 
-  void deleteNode(string br, string md, double pr) {
+  void deleteNode(string br, string md) {
+    File del;
     if (head != 0) {
-      if (head == tail && ( br == head->brand && md == head->model && pr == head->price ) ) {
+      if (head == tail && ( br == head->brand && md == head->model) ) {
+        if(remove( "products.txt" ) != 0)
+          perror( "Error deleting file" );
+        else
+          puts( "File successfully deleted" );
+
         delete head;
         head = tail = 0;
-      } else if (br == head->brand && md == head->model && pr == head->price) {
+
+      } else if (br == head->brand && md == head->model) {
         // deleteFromHead();
-        ItemNode *tmp = head;
+        ItemNode *tmp = head,*p;
         head = head->next;
         delete tmp;
+
+        del.delete_from_file(br,md);
+   
       } else {
         ItemNode *p, *tmp;
-        for (p = head, tmp = head->next; (tmp != 0 && tmp->brand != br && tmp->model != md && tmp->price != pr);
+        for (p = head, tmp = head->next; (tmp != 0 && tmp->brand != br && tmp->model != md);
              p = p->next, tmp = tmp->next)
           ;
 
@@ -104,6 +198,7 @@ public:
             tail = p;
           delete tmp;
         }
+        del.delete_from_file(br,md);
       }
     }
   }
@@ -131,62 +226,26 @@ public:
   }
 };
 
-string *splitString(string str) {
-  static string array[3];
-  std::vector<std::string> strings;
-   std::istringstream f(str);
-   std::string s;
-   int iterator = 0;
-   while (std::getline(f, s, ',')) {
-         array[iterator] = s;
-         iterator++;
-         strings.push_back(s);
-   }
-   return array;
-}
 
-double convertToDouble(string str) {
-  double price = atof(str.c_str());
-  return price;
-}
-
-ItemList *reCreateDb() {
-  ItemList *dB = new ItemList();
-
-  //Reading File
-  ifstream file1("products.txt");
-	string temp;
-	int lineCount=0;
-	while(getline(file1,temp)){
-		++lineCount;
-		}
-
-	ifstream file2("products.txt");
-	string lines[lineCount];
-  int lineIterator = 0;
-	string line;
-  while(getline(file2, line)){
-    lines[lineIterator] = line;
-    lineIterator++;
-  }
-
-  //recreate database from the readed file lines
-  for (int i = 0; i<lineCount;i++){
-    string var = lines[i];
-    string *splitted = splitString(var);
-    dB->addToTail(splitted[0],splitted[1],convertToDouble(splitted[2]));
-  }
-	return dB;
-
-}
 
 int main() {
-
+  remove("products.txt");
   ItemList *headPhones = new ItemList();
+  headPhones->addToTail("yalahwi","3x01",1235.57);
+  headPhones->addToTail("yala","3x01",19.3);
+  headPhones->addToTail("yalahw","3x01",9.5);
+  headPhones->addToTail("ya","3x01",35.54);
+  headPhones->addToTail("yalah","3x01",75.8);
+  headPhones->deleteNode("yalahwi","3x01");
 
-  ItemList *x = reCreateDb();
-	x->addToTail("yalahwi","3x01",1235.56);
-	x->printAll();
+  /*ItemList *x = reCreateDb();
+	x->addToTail("yalahwi","3x01",1235.57);
+  x->addToTail("yala","3x01",19.3);
+  x->addToTail("yalahw","3x01",9.5);
+  x->addToTail("ya","3x01",35.54);
+  x->addToTail("yalah","3x01",75.8);
+  //x->deleteNode("yalahwi","3x01",1235.57);*/
+	headPhones->printAll();
 
   return 0;
 }
