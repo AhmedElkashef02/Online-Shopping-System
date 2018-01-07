@@ -69,10 +69,22 @@ public:
 class ItemList{
 private:
   ItemNode *head, *tail;
+  
 
 public:
-  ItemList() {
+  string filename;
+  ItemList(string file) {
+    filename=file;
     head = tail = 0;
+    ifstream check(file.c_str());
+    if (check.good()){
+      return;
+    }
+    else{
+      ofstream create;
+      create.open(file.c_str());
+      create.close();
+    }
   }
 
   int isEmpty() {
@@ -84,7 +96,6 @@ public:
     if (tail == 0) {
       head = tail = new ItemNode(br, md, pr);
       add.add_to_file(br, md, pr);
-
     } else {
       tail->next = new ItemNode(br, md, pr);
       tail = tail->next;
@@ -156,7 +167,6 @@ public:
 };
 
 
-
 int main() {
   remove("products.txt"); // to remove the file with each run of the program to avoid adding to the previous file
   //Test cases
@@ -169,6 +179,5 @@ int main() {
   headPhones->deleteNode("yalahwi","3x01");
 
 	headPhones->printAll();
-
   return 0;
 }
