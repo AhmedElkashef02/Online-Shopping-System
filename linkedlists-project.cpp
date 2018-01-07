@@ -25,10 +25,22 @@ public:
 class ItemList {
 private:
   ItemNode *head, *tail;
+  
 
 public:
-  ItemList() {
+  string filename;
+  ItemList(string file) {
+    filename=file;
     head = tail = 0;
+    ifstream check(file.c_str());
+    if (check.good()){
+      return;
+    }
+    else{
+      ofstream create;
+      create.open(file.c_str());
+      create.close();
+    }
   }
 
   int isEmpty() {
@@ -45,14 +57,14 @@ public:
     if (tail == 0) {
       head = tail = new ItemNode(br, md, pr);
       ofstream myfile;
-      myfile.open("products.txt");
+      myfile.open(filename.c_str());
       myfile << br << "," << md << "," << pr << "\n";
       myfile.close();
     } else {
       tail->next = new ItemNode(br, md, pr);
       tail = tail->next;
       ofstream myfile;
-      myfile.open("products.txt",ios::app);
+      myfile.open(filename.c_str(),ios::app);
       myfile << br << "," << md << "," << pr << "\n";
       myfile.close();
     }
@@ -150,21 +162,21 @@ double convertToDouble(string str) {
   return price;
 }
 
-ItemList *reCreateDb() {
-  ItemList *dB = new ItemList();
+ItemList *reCreateDb(string file) {
+  ItemList *dB = new ItemList(file);
 
   //Reading File
-  ifstream file1("products.txt");
-	string temp;
-	int lineCount=0;
-	while(getline(file1,temp)){
-		++lineCount;
-		}
+  ifstream file1(dB->filename.c_str());
+  string temp;
+  int lineCount=0;
+  while(getline(file1,temp)){
+    ++lineCount;
+    }
 
-	ifstream file2("products.txt");
-	string lines[lineCount];
+  ifstream file2(dB->filename.c_str());
+  string lines[lineCount];
   int lineIterator = 0;
-	string line;
+  string line;
   while(getline(file2, line)){
     lines[lineIterator] = line;
     lineIterator++;
@@ -176,17 +188,36 @@ ItemList *reCreateDb() {
     string *splitted = splitString(var);
     dB->addToTail(splitted[0],splitted[1],convertToDouble(splitted[2]));
   }
-	return dB;
+  return dB;
 
 }
 
 int main() {
+  string Mobile_phones = "Mobile_Phones.txt";
+  string Headphones = "Headphones.txt";
+  string Laptops = "Laptops.txt";
+  string Power_banks = "Power_Banks.txt";
+  string Chargers = "Chargers.txt";
 
-  ItemList *headPhones = new ItemList();
+  ItemList *mobiles = reCreateDb(Mobile_phones);
 
-  ItemList *x = reCreateDb();
-	x->addToTail("yalahwi","3x01",1235.56);
-	x->printAll();
+  mobiles->addToTail("LG","Stylus 2", 899.99);
+  // mobiles->addToTail("Samsung","Galaxy S2",1200.99);
+  mobiles->addToTail("OnePlus","3T",560.99);
+ //  mobiles->addToTail("Blackberry","Z",14399.99);
+  // mobiles->addToTail("Samsung","Note 2", 1226.99);
+  mobiles->printAll();
+
+  cout<<endl;
+
+
+  ItemList *laptops = reCreateDb(Laptops);
+  laptops->addToTail("HP","Pavilion",1235.999);
+  laptops->addToTail("HP","Envy",1245.68);
+  // laptops->addToTail("Lenovo","YOGA 300", 1244.98);
+  // laptops->addToTail("Apple","Mack Book Pro",99999.99);
+  laptops->printAll();
+
 
   return 0;
 }
