@@ -1,3 +1,9 @@
+/* modifications:
+    1- create a File class has methods such as add to file, delete from file
+       so our program works such that, if we adding a product to a linked list we use addtotail and that method in ItemList(linked list)
+       class adding a node containing the info to the end of the linked list as well as adding to the file product.txt by calling
+       fuction add to file in File class, and same if we want to delete a product 
+*/
 #include <iostream>
 #include <stdio.h>
 #include <string>
@@ -7,7 +13,7 @@
 #include <stdlib.h>
 
 using namespace std;
-class ItemList;
+//class ItemList;
 class ItemNode {
 public:
   string brand;
@@ -24,13 +30,10 @@ public:
 };
 class File{
 public:
-  string NumperToString (int Number){
-    stringstream ss;
-    ss << Number;
-    return ss.str();
-  }
   void add_to_file(string br, string md, double pr){
+      // open file product to write
       ofstream myfile("products.txt",ios::app);
+      // adding the given brand, model and price values to the end of the file
       myfile << br << "," << md << "," << pr << "\n";
       myfile.close();
 
@@ -43,13 +46,13 @@ public:
         cout <<"Unable to open products.txt, please make sure file exists!"<<endl;
         return;
     }
-    ofstream out("outfile.txt"); //temp file that will have our records with out the deleted line
-        //Now our file (records.txt) is open lets loop through an find our customer name which wa
+    ofstream out("outfile.txt"); //temp file that will have our products with out the deleted line
+        //Now our file (products.txt) is open lets loop through an find our brand and model name which wa
         //inputted just a ways up.
     while( getline(in,line) )
     {
          if ( ( line.find (b+','+m, 0)))
-        //if last name is found delete the whole line
+        //if brand and model is found delete the whole line
         out << line << "\n";
     }
     //close our files, because were done!
@@ -61,54 +64,7 @@ public:
     rename("outfile.txt","products.txt");
   }
 
-  string *splitString(string str) {
-    static string array[3];
-    std::vector<std::string> strings;
-     std::istringstream f(str);
-     std::string s;
-     int iterator = 0;
-     while (std::getline(f, s, ',')) {
-           array[iterator] = s;
-           iterator++;
-           strings.push_back(s);
-     }
-     return array;
-  }
 
-  double convertToDouble(string str) {
-    double price = atof(str.c_str());
-    return price;
-  }
-
-  /*ItemList *reCreateDb() {
-    ItemList *dB = new ItemList();
-
-    //Reading File
-    ifstream file1("products.txt");
-    string temp;
-    int lineCount=0;
-    while(getline(file1,temp)){
-      ++lineCount;
-      }
-
-    ifstream file2("products.txt");
-    string lines[lineCount];
-    int lineIterator = 0;
-    string line;
-    while(getline(file2, line)){
-      lines[lineIterator] = line;
-      lineIterator++;
-    }
-
-    //recreate database from the readed file lines
-    for (int i = 0; i<lineCount;i++){
-      string var = lines[i];
-      string *splitted = splitString(var);
-      dB->addToTail(splitted[0],splitted[1],convertToDouble(splitted[2]));
-    }
-  return dB;
-
-  }*/
 };  
 class ItemList{
 private:
@@ -121,12 +77,6 @@ public:
 
   int isEmpty() {
     return head == 0;
-  }
-
-  void addToHead(string br, string md, double pr) {
-    head = new ItemNode(br, md, pr, head);
-    if (tail == 0)
-      tail = head;
   }
 
   void addToTail(string br, string md, double pr) {
@@ -142,33 +92,12 @@ public:
     }
   }
 
-  void deleteFromHead() {
-    ItemNode *tmp = head;
-    if (head == tail)
-      head = tail = 0;
-    else
-      head = head->next;
-    delete tmp;
-  }
-
-  void deleteFromTail() {
-    if (head == tail) {
-      delete head;
-      head = tail = 0;
-    } else {
-      ItemNode *tmp;
-      for (tmp = head; tmp->next != tail; tmp = tmp->next)
-        ;
-
-      delete tail;
-      tail = tmp;
-      tail->next = 0;
-    }
-  }
 
   void deleteNode(string br, string md) {
     File del;
     if (head != 0) {
+      // if the list has only one node as well as the file has only one line of info
+      // so we can remove that file as well as the node 
       if (head == tail && ( br == head->brand && md == head->model) ) {
         if(remove( "products.txt" ) != 0)
           perror( "Error deleting file" );
@@ -229,7 +158,8 @@ public:
 
 
 int main() {
-  remove("products.txt");
+  remove("products.txt"); // to remove the file with each run of the program to avoid adding to the previous file
+  //Test cases
   ItemList *headPhones = new ItemList();
   headPhones->addToTail("yalahwi","3x01",1235.57);
   headPhones->addToTail("yala","3x01",19.3);
@@ -238,13 +168,6 @@ int main() {
   headPhones->addToTail("yalah","3x01",75.8);
   headPhones->deleteNode("yalahwi","3x01");
 
-  /*ItemList *x = reCreateDb();
-	x->addToTail("yalahwi","3x01",1235.57);
-  x->addToTail("yala","3x01",19.3);
-  x->addToTail("yalahw","3x01",9.5);
-  x->addToTail("ya","3x01",35.54);
-  x->addToTail("yalah","3x01",75.8);
-  //x->deleteNode("yalahwi","3x01",1235.57);*/
 	headPhones->printAll();
 
   return 0;
