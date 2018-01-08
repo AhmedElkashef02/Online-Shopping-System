@@ -134,6 +134,22 @@ public:
     }
   }
 
+  void update(char* file_name)
+  {
+
+    remove(file_name);
+    ofstream indata;
+    indata.open(file_name);
+    ItemNode *temp;
+    for(temp = head; temp != 0; temp = temp->next)
+    {
+      indata << temp->brand << "," << temp->model << "," << temp->price << endl;
+    }
+
+    indata.close();
+  }
+
+
   ~ItemList() {
     for (ItemNode *p; !isEmpty();) {
       p = head->next;
@@ -193,7 +209,7 @@ ItemList *reCreateDb(string file) {
 }
 
 int main() {
-  string Mobile_phones = "Mobile_Phones.txt";
+  char Mobile_phones[] = "Mobile_Phones.txt";
   string Headphones = "Headphones.txt";
   string Laptops = "Laptops.txt";
   string Power_banks = "Power_Banks.txt";
@@ -201,11 +217,14 @@ int main() {
 
   ItemList *mobiles = reCreateDb(Mobile_phones);
 
-  mobiles->addToTail("LG","Stylus 2", 899.99);
+  //mobiles->addToTail("LG","Stylus 2", 899.99);
   // mobiles->addToTail("Samsung","Galaxy S2",1200.99);
   mobiles->addToTail("OnePlus","3T",560.99);
  //  mobiles->addToTail("Blackberry","Z",14399.99);
-  // mobiles->addToTail("Samsung","Note 2", 1226.99);
+   //mobiles->addToTail("Samsung","Note 2", 1226.99);
+  mobiles->deleteNode("LG","Stylus 2", 899.99);
+  //mobiles->deleteNode("Samsung","Note 2", 1226.99);
+  mobiles->update(Mobile_phones);
   mobiles->printAll();
 
   cout<<endl;

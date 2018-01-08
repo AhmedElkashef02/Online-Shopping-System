@@ -1,3 +1,5 @@
-Samsung,Note 2,1226.99
 LG,Stylus 2,899.99
+LG,Stylus 2,899.99
+OnePlus,3T,560.99
+Samsung,Note 2,1226.99
 OnePlus,3T,560.99
