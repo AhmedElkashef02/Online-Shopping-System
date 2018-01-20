@@ -4,7 +4,7 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
-#include "md5.h"
+#include "md51.h"
 
 using namespace std;
 
@@ -182,10 +182,12 @@ ItemList *reCreateDb() {
 
 int main() {
 
-  ItemList *headPhones = new ItemList();
+  //ItemList *headPhones = new ItemList();
 
   ItemList *x = reCreateDb();
-	x->addToTail("OmarGaber","omamomam");
+  x->addToTail("OmarGaber","omamomam");
+  x->addToTail("OmarGaber","omamomam");
+  //cout<< md5("a7a7a")<<endl;
 	x->printAll();
 
   return 0;

@@ -146,6 +146,22 @@ public:
     }
   }
 
+  void update(char* file_name)
+  {
+
+    remove(file_name);
+    ofstream indata;
+    indata.open(file_name);
+    ItemNode *temp;
+    for(temp = head; temp != 0; temp = temp->next)
+    {
+      indata << temp->brand << "," << temp->model << "," << temp->price << endl;
+    }
+
+    indata.close();
+  }
+
+
   ~ItemList() {
     for (ItemNode *p; !isEmpty();) {
       p = head->next;
@@ -158,17 +174,31 @@ public:
 
 
 int main() {
-  remove("products.txt"); // to remove the file with each run of the program to avoid adding to the previous file
-  //Test cases
-  ItemList *headPhones = new ItemList();
-  headPhones->addToTail("yalahwi","3x01",1235.57);
-  headPhones->addToTail("yala","3x01",19.3);
-  headPhones->addToTail("yalahw","3x01",9.5);
-  headPhones->addToTail("ya","3x01",35.54);
-  headPhones->addToTail("yalah","3x01",75.8);
-  headPhones->deleteNode("yalahwi","3x01");
+  char Mobile_phones[] = "Mobile_Phones.txt";
+  string Headphones = "Headphones.txt";
+  string Laptops = "Laptops.txt";
+  string Power_banks = "Power_Banks.txt";
+  string Chargers = "Chargers.txt";
 
-	headPhones->printAll();
+  ItemList *mobiles = reCreateDb(Mobile_phones);
 
+  //mobiles->addToTail("LG","Stylus 2", 899.99);
+  // mobiles->addToTail("Samsung","Galaxy S2",1200.99);
+  mobiles->addToTail("OnePlus","3T",560.99);
+ //  mobiles->addToTail("Blackberry","Z",14399.99);
+   //mobiles->addToTail("Samsung","Note 2", 1226.99);
+  mobiles->deleteNode("LG","Stylus 2", 899.99);
+  //mobiles->deleteNode("Samsung","Note 2", 1226.99);
+  mobiles->update(Mobile_phones);
+  mobiles->printAll();
+
+  cout<<endl;
+
+  ItemList *laptops = reCreateDb(Laptops);
+  laptops->addToTail("HP","Pavilion",1235.999);
+  laptops->addToTail("HP","Envy",1245.68);
+  // laptops->addToTail("Lenovo","YOGA 300", 1244.98);
+  // laptops->addToTail("Apple","Mack Book Pro",99999.99);
+  laptops->printAll();
   return 0;
 }

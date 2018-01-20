@@ -1,3 +1,13 @@
 Apple,Mack Book Pro,100000
 HP,Pavilion,1236
 HP,Envy,1245.68
+HP,Pavilion,1236
+HP,Envy,1245.68
+HP,Pavilion,1236
+HP,Envy,1245.68
+HP,Pavilion,1236
+HP,Envy,1245.68
+HP,Pavilion,1236
+HP,Envy,1245.68
+HP,Pavilion,1236
+HP,Envy,1245.68
