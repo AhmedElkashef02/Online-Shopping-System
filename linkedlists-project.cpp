@@ -73,12 +73,22 @@ public:
 class ItemList{
 private:
   ItemNode *head, *tail;
-  string File_name;
 
 public:
-  ItemList(string Fn) {
+  string filename;
+  ItemList(string file) {
+    filename=file;
     head = tail = 0;
-    File_name = Fn;
+    ifstream check(file.c_str());
+    if (check.good()){
+      return;
+    }
+    else{
+      ofstream create;
+      create.open(file.c_str());
+      create.close();
+    }
+
   }
 
   int isEmpty() {
@@ -89,8 +99,7 @@ public:
     File add;
     if (tail == 0) {
       head = tail = new ItemNode(br, md, pr);
-      add.add_to_file(br, md, pr, File_name);
-
+      add.add_to_file(br, md, pr);
     } else {
       tail->next = new ItemNode(br, md, pr);
       tail = tail->next;
@@ -162,7 +171,6 @@ public:
 };
 
 
-
 int main() {
   string pr = "products.txt";
   string mb = "mobiles.txt";
@@ -180,18 +188,6 @@ int main() {
   headPhones->deleteNode("yalahwi","3x01");
 
 	headPhones->printAll();
-
-cout<<endl;
-
-	ItemList *Phones = new ItemList(mb.c_str());
-  Phones->addToTail("yalahwi","3x01",1235.57);
-  Phones->addToTail("yala","3x01",19.3);
-  Phones->addToTail("yalahw","3x01",9.5);
-  Phones->addToTail("ya","3x01",35.54);
-  Phones->addToTail("yalah","3x01",75.8);
-  Phones->deleteNode("yalahwi","3x01");
-
-	Phones->printAll();		
 
   return 0;
 }
