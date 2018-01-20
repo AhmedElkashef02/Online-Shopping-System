@@ -5,7 +5,7 @@ void delet(string b, string a){
 string h(b),j(a);
 //Ask the user who they want to delete
 	string line;
-	//cout <<"Enter the Last Name of the person you want to delete." <<endl;
+		//cout <<"Enter the Last Name of the person you want to delete." <<endl;
 	//cin >>last_name;
 	//Lets open our file that holds our records (records.txt), if it does not open show error
 	ifstream in("example.txt");

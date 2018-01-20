@@ -11,11 +11,13 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
+#include <typeinfo>
 
 using namespace std;
-//class ItemList;
+class ItemList;
 class ItemNode {
 public:
+  string catprod;
   string brand;
   string model;
   double price;
@@ -27,17 +29,21 @@ public:
     price = pr;
     next = ptr;
   }
+  ItemNode(string notitems, ItemNode *ptr = 0){
+    catprod = notitems;
+    next = ptr;
+  }
 };
-class File{	
+class File{
 public:
-
   void add_to_file(string br, string md, double pr, string FileName){
+
       // open file product to write
       ofstream myfile(FileName.c_str(),ios::app);
       // adding the given brand, model and price values to the end of the file
       myfile << br << "," << md << "," << pr << "\n";
       myfile.close();
-
+ 
   }
   void delete_from_file(string brn, string mod, string FileName){
 	    string b(brn), m(mod),line;
@@ -64,40 +70,93 @@ public:
 	    // rename old to new
 	    rename("outfile.txt",FileName.c_str());
   }
-  // void update_file(string br="", string md="", double pr){
 
+  string *splitString(string str) {
+    static string array[3];
+    std::vector<std::string> strings;
+     std::istringstream f(str);
+     std::string s;
+     int iterator = 0;
+     while (std::getline(f, s, ',')) {
+           array[iterator] = s;
+           iterator++;
+           strings.push_back(s);
+     }
+     return array;
+  }
 
-  // }
+  double convertToDouble(string str) {
+    double price = atof(str.c_str());
+    return price;
+  }
+
 
 };  
 class ItemList{
 private:
   ItemNode *head, *tail;
-  string File_name;
 
 public:
-  ItemList(string Fn) {
+  string File_name;
+  ItemList(string file) {
+    File_name=file;
     head = tail = 0;
-    File_name = Fn;
+    ifstream check(file.c_str());
+    if (check.good()){
+      return;
+    }
+    else{
+      ofstream create;
+      create.open(file.c_str());
+      create.close();
+    }
   }
-
   int isEmpty() {
     return head == 0;
   }
 
-  void addToTail(string br, string md, double pr) {
-    File add;
-    if (tail == 0) {
-      head = tail = new ItemNode(br, md, pr);
-      add.add_to_file(br, md, pr, File_name);
-
-    } else {
-      tail->next = new ItemNode(br, md, pr);
-      tail = tail->next;
-      add.add_to_file(br, md, pr,File_name);
-    }
+  void addToHead(string br, string md, double pr) {
+    head = new ItemNode(br, md, pr, head);
+    if (tail == 0)
+      tail = head;
   }
 
+  void addToTail(string br, string md, double pr) {
+    File add;
+      if (tail == 0) {
+        head = tail = new ItemNode(br, md, pr);
+        //add.add_to_file(br, md, pr, File_name);
+
+      } else {
+        tail->next = new ItemNode(br, md, pr);
+        tail = tail->next;
+        //add.add_to_file(br, md, pr, File_name);
+      }
+  }
+
+  void deleteFromHead() {
+    ItemNode *tmp = head;
+    if (head == tail)
+      head = tail = 0;
+    else
+      head = head->next;
+    delete tmp;
+  }
+
+  void deleteFromTail() {
+    if (head == tail) {
+      delete head;
+      head = tail = 0;
+    } else {
+      ItemNode *tmp;
+      for (tmp = head; tmp->next != tail; tmp = tmp->next)
+        ;
+
+      delete tail;
+      tail = tmp;
+      tail->next = 0;
+    }
+  }
 
   void deleteNode(string br, string md) {
     File del;
@@ -159,39 +218,85 @@ public:
       head = p;
     }
   }
-};
 
+  void update(string file_name)
+  {
+    remove(file_name.c_str());
+    ofstream indata;
+    indata.open(file_name.c_str());
+    ItemNode *temp;
+    for(temp = head; temp != 0; temp = temp->next)
+    {
+      indata << temp->brand << "," << temp->model << "," << temp->price << endl;
+    }
+
+    indata.close();
+  }
+
+
+};
+	ItemList *reCreateDb(string file) {
+	  ItemList *dB = new ItemList(file);
+	  File call;
+	  //Reading File
+	  ifstream file1(dB->File_name.c_str());
+	  string temp;
+	  int lineCount=0;
+	  while(getline(file1,temp)){
+	    ++lineCount;
+	    }
+
+	  ifstream file2(dB->File_name.c_str());
+	  string lines[lineCount];
+	  int lineIterator = 0;
+	  string line;
+	  while(getline(file2, line)){
+	    lines[lineIterator] = line;
+	    lineIterator++;
+	  }
+
+	  //recreate database from the readed file lines
+	  for (int i = 0; i<lineCount;i++){
+	    string var = lines[i];
+	    string *splitted = call.splitString(var);
+	    dB->addToTail(splitted[0],splitted[1],call.convertToDouble(splitted[2]));
+	  }
+	  return dB;
+
+	}
 
 
 int main() {
-  string pr = "products.txt";
-  string mb = "mobiles.txt";
-  // char* j = "hello";
-  // remove(j);
-  // remove(mb.c_str()); 		
-  // remove(pr.c_str()); // to remove the file with each run of the program to avoid adding to the previous file
-  //Test cases
-  ItemList *headPhones = new ItemList(pr.c_str());
-  headPhones->addToTail("yalahwi","3x01",1235.57);
-  headPhones->addToTail("yala","3x01",19.3);
-  headPhones->addToTail("yalahw","3x01",9.5);
-  headPhones->addToTail("ya","3x01",35.54);
-  headPhones->addToTail("yalah","3x01",75.8);
-  headPhones->deleteNode("yalahwi","3x01");
 
-	headPhones->printAll();
+	string list_name;
+	const char *a[] = {"mobiles", "laptops"};
 
-cout<<endl;
+			ItemList *mobile_list = reCreateDb(a[0]);
 
-	ItemList *Phones = new ItemList(mb.c_str());
-  Phones->addToTail("yalahwi","3x01",1235.57);
-  Phones->addToTail("yala","3x01",19.3);
-  Phones->addToTail("yalahw","3x01",9.5);
-  Phones->addToTail("ya","3x01",35.54);
-  Phones->addToTail("yalah","3x01",75.8);
-  Phones->deleteNode("yalahwi","3x01");
+			//ItemList *laptop_list = reCreateDb(a[1]);
 
-	Phones->printAll();		
+
+					// mobile_list->addToTail("yalahwi","3x01",1235.57);
+					// mobile_list->addToTail("yala","3x01",19.3);
+					// mobile_list->addToTail("yalahw","3x01",9.5);
+					// mobile_list->addToTail("ya","3x01",35.54);
+					// mobile_list->addToTail("yalah","3x01",75.8);
+     //      mobile_list->update(a[0]);
+					mobile_list->deleteNode("yalah","3x01");
+          mobile_list->update(a[0]);
+			mobile_list->printAll();
+	
+ //  remove("products.txt");
+ //  ItemList *headPhones = new ItemList();
+ //  headPhones->addToTail("yalahwi","3x01",1235.57);
+ //  headPhones->addToTail("yala","3x01",19.3);
+ //  headPhones->addToTail("yalahw","3x01",9.5);
+ //  headPhones->addToTail("ya","3x01",35.54);
+ //  headPhones->addToTail("yalah","3x01",75.8);
+ //  headPhones->deleteNode("yalahwi","3x01");
+
+	
+	// headPhones->printAll();
 
   return 0;
 }
